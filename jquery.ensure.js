@@ -15,32 +15,40 @@ $.fn.ensure = function(fn) {
 $.ensure = {
   actions: [],
 
-  run: function() {
+  applyActions: function(elem) {
+    elems = $(elem).find('*').andSelf();
     $.each(this.actions, function(id, action) {
-      $(action.prevObject).find(action.selector).each(function() {
+      if ($.makeArray($(elem).parents()).indexOf(action.prevObject.get(0)) == -1) return;
+
+      elems.filter(action.selector).each(function() {
         if (!$(this).data('ensured_action_' + id)) {
           $(this)[action.fn].apply($(this), action.args);
           $(this).data('ensured_action_' + id, true);
         }
       });
     });
+    return elem[0];
   }
 };
 
-// Create a new domManip method that wraps the call to run ensured actions
+// Wrap the jQuery domManip method to apply all ensured actions
 var domManip = $.fn.domManip
 $.fn.domManip = function() {
+
+  var callback = arguments[3];
+  arguments[3] = function(elem) {
+    callback.apply(this, [elem]);
+    elem = $.ensure.applyActions(elem);
+  };
+
   // Call the original method
   var r = domManip.apply(this, arguments);
-  
-  // Run all ensured actions
-  $.ensure.run();
   
   // Return the original methods result
   return r;
 };
 
-// Create a new find method that exposes the most recent selector used
+// Wrap the jQuery find method to expose the most recent selector used
 // (find is called inside $(selector))
 var find = $.fn.find;
 $.fn.find = function(selector) {
