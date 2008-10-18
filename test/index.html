@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+  <title>jquery-ensure tests</title>    
+  <script language="javascript" src="jquery-1.2.6.js" type="text/javascript"></script>
+  <script language="javascript" src="testrunner.js" type="text/javascript"></script>
+  <script language="javascript" src="../jquery.ensure.js" type="text/javascript"></script>
+  <!-- add a script reference to your library here -->
+  <link media="screen" href="testsuite.css" type="text/css" rel="stylesheet"/>    
+</head>
+<body>
+
+<script language="javascript" type="text/javascript">
+
+module("The qUnit framework");
+
+  test("should be setup correctly", function() {
+    ok(true, 'basic assertion with description');
+    equals(1 == 2, false, 'this one will append the description with the actual value');
+    ok(1 == 2, 'this one should fail');
+  })
+
+</script>
+
+  <!-- qUnit framework HTML -->
+        
+  <h1>My Foo Tests</h1>
+  <h2 id="banner"></h2>
+  <ol id="tests"></ol>
+  <div id="results"></div>
+  <div id="main"></div>        
+  
+  <!-- HTML used by tests -->
+        
+</body>
+</html>
+
