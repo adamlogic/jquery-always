@@ -30,7 +30,6 @@ $.ensure = {
         }
       });
     });
-    return elem[0];
   }
 };
 
@@ -41,7 +40,7 @@ $.fn.domManip = function() {
   var callback = arguments[3];
   arguments[3] = function(elem) {
     callback.apply(this, [elem]);
-    elem = $.ensure.applyActions(elem);
+    if (elem.nodeType != 3) $.ensure.applyActions(elem);
   };
 
   // Call the original method
