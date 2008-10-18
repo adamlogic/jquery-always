@@ -7,30 +7,43 @@
   <script language="javascript" src="../jquery.ensure.js" type="text/javascript"></script>
   <!-- add a script reference to your library here -->
   <link media="screen" href="testsuite.css" type="text/css" rel="stylesheet"/>    
+  <style>
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
 
 <script language="javascript" type="text/javascript">
 
-module("The qUnit framework");
+$(function() {
+  $('#container1 span').ensure('addClass', 'ensured');
+});
 
-  test("should be setup correctly", function() {
-    ok(true, 'basic assertion with description');
-    equals(1 == 2, false, 'this one will append the description with the actual value');
-    ok(1 == 2, 'this one should fail');
+module("When adding an element to the page");
+
+  test("it should receive the ensured action if it matches the selector", function() {
+    $('#container1').append('<span id="test1">test</span>');
+    ok($('#test1').hasClass('ensured'), 'action was applied');
+  })
+
+  test("it should not receive the ensured action if it does not match the selector", function() {
+    $('#container2').append('<span id="test2">test</span>');
+    ok(!$('#test2').hasClass('ensured'), 'action was not applied');
   })
 
 </script>
 
   <!-- qUnit framework HTML -->
         
-  <h1>My Foo Tests</h1>
+  <h1>jquery-ensure</h1>
   <h2 id="banner"></h2>
   <ol id="tests"></ol>
   <div id="results"></div>
   <div id="main"></div>        
   
   <!-- HTML used by tests -->
+  <div id="container1" class="hidden"></div>
+  <div id="container2" class="hidden"></div>
         
 </body>
 </html>

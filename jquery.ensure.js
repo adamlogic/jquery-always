@@ -16,14 +16,8 @@ $.ensure = {
   actions: [],
 
   applyActions: function(elem) {
-    elems = $(elem).find('*').andSelf();
     $.each(this.actions, function(id, action) {
-      // Verify that the new element is within the context of the ensured action
-      if (action.prevObject.get(0) != document &&
-          $.makeArray($(elem).parents()).indexOf(action.prevObject.get(0)) == -1) return;
-
-      // Check if the new element (or its descendents) need this action applied
-      elems.filter(action.selector).each(function() {
+      $(action.prevObject).find(action.selector).each(function() {
         if (!$(this).data('ensured_action_' + id)) {
           $(this)[action.fn].apply($(this), action.args);
           $(this).data('ensured_action_' + id, true);
