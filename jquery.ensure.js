@@ -4,9 +4,7 @@ $.fn.ensure = function(fn) {
   var args = $.makeArray(arguments), selector = this.selector, prevObject = this.prevObject;
   args.shift();
 
-  // id is the array position of this action
   var id = $.ensure.actions.push({fn:fn, args:args, selector:selector, prevObject:prevObject}) - 1;
-
   this.data('ensured_action_' + id, true);
 
   return this[fn].apply(this, args);
@@ -44,16 +42,18 @@ $.fn.domManip = function() {
   return r;
 };
 
-// Wrap the jQuery find method to expose the most recent selector used
-// (find is called inside $(selector))
-var find = $.fn.find;
-$.fn.find = function(selector) {
-	// Call the original find and save the result
-	var r = find.apply(this, arguments);
+// Wrap the jQuery init method to expose the selector
+var init = $.prototype.init;
+$.prototype.init = function(selector, context) {
+	// Call the original init and save the result
+	var r = init.apply(this, arguments);
 	
-  r.selector = selector;
-	
+  r.selector = selector
+
 	return r;
 };
+
+// Give the init function the jQuery prototype for later instantiation (needed after Rev 4091)
+$.prototype.init.prototype = $.prototype;
 
 })(jQuery);

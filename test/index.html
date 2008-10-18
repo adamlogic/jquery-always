@@ -17,19 +17,33 @@
 
 $(function() {
   $('#container1 span').ensure('addClass', 'ensured');
+  $('#container1').ensure('addClass', 'ensured');
+});
+
+module("When ensuring an action");
+
+test("it should apply the action to any matching elements on the page", function() {
+  ok($('#container1').hasClass('ensured'), 'action was applied');
 });
 
 module("When adding an element to the page");
 
-  test("it should receive the ensured action if it matches the selector", function() {
-    $('#container1').append('<span id="test1">test</span>');
-    ok($('#test1').hasClass('ensured'), 'action was applied');
-  })
+test("it should receive the ensured action if it matches the selector", function() {
+  $('#container1').append('<span id="test1">test</span>');
+  ok($('#test1').hasClass('ensured'), 'action was applied');
+})
 
-  test("it should not receive the ensured action if it does not match the selector", function() {
-    $('#container2').append('<span id="test2">test</span>');
-    ok(!$('#test2').hasClass('ensured'), 'action was not applied');
-  })
+test("it should not receive the ensured action if it does not match the selector", function() {
+  $('#container2').append('<span id="test2">test</span>');
+  ok(!$('#test2').hasClass('ensured'), 'action was not applied');
+})
+
+module("When adding an element with children to the page");
+
+test("child elements should receive the ensured action if they match the selector", function() {
+  $('#container1').append('<div><span id="nested">test</span></div>');
+  ok($('#nested').hasClass('ensured'), 'action was applied');
+})
 
 </script>
 
