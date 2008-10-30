@@ -7,6 +7,7 @@ $.fn.ensure = function(fn) {
   var id = $.ensure.actions.push({fn:fn, args:args, selector:selector, prevObject:prevObject}) - 1;
   this.data('ensured_action_' + id, true);
 
+  if (!this[fn]) throw(fn + ' has not been defined.');
   return this[fn].apply(this, args);
 };
 
