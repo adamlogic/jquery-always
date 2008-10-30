@@ -18,8 +18,8 @@ $.ensure = {
     $.each(this.actions, function(id, action) {
       $(action.prevObject).find(action.selector).each(function() {
         if (!$(this).data('ensured_action_' + id)) {
-          $(this)[action.fn].apply($(this), action.args);
           $(this).data('ensured_action_' + id, true);
+          $(this)[action.fn].apply($(this), action.args);
         }
       });
     });
