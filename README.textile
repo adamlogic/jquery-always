@@ -1,0 +1,15 @@
+h1. jquery-ensure
+
+h2. What is it?
+
+A jQuery plugin to ensure that a specified jquery method/behavior gets applied to DOM elements that are dynamically added after the initial page load.
+
+h2. How do I use it?
+
+start with:
+
+<code>$('.do_something').click(function() { alert('something') });</code>
+
+ensure it:
+
+<code>$('.do_something').ensure('click', function() { alert('something') });</code>
