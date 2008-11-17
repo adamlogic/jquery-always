@@ -10,6 +10,10 @@ start with:
 
 <code>$('.do_something').click(function() { alert('something') });</code>
 
-ensure it:
+ensure it (replaces previous line):
 
 <code>$('.do_something').ensure('click', function() { alert('something') });</code>
+
+add some content:
+
+<code>$('body').append('<a href="#" class="do_something">click me</a>');</code>
