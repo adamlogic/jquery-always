@@ -5,7 +5,6 @@ $.fn.ensure = function(fn) {
   args.shift();
 
   var id = $.ensure.actions.push({fn:fn, args:args, selector:selector, prevObject:prevObject}) - 1;
-  this.data('ensured_action_' + id, true);
 
   if (!this[fn]) throw(fn + ' has not been defined.');
   return this[fn].apply(this, args);
@@ -15,12 +14,27 @@ $.ensure = {
   actions: [],
 
   applyActions: function(elem) {
+    elem = $(elem);
     $.each(this.actions, function(id, action) {
-      $(action.prevObject).find(action.selector).each(function() {
-        if (!$(this).data('ensured_action_' + id)) {
-          $(this).data('ensured_action_' + id, true);
-          $(this)[action.fn].apply($(this), action.args);
+      $.each(action.selector.split(','), function() {
+        var tokens = $.trim(this).split(' ');
+
+        // remove parent tokens from the selector
+        for (var i=0; elem.parents(tokens[i]).length && i < tokens.length; i++) {
+          tokens.shift();
+          i += 1;
         }
+
+        // find contained elements that match the remaining selector
+        var selector = tokens.join(' '), elems = elem.find(selector);
+
+        // include the element itself
+        if (elem.filter(selector).length) elems = elems.andSelf();
+
+        // apply the action to all matched elements
+        elems.each(function() {
+          $(this)[action.fn].apply($(this), action.args);
+        });
       });
     });
   }
@@ -31,10 +45,14 @@ var domManip = $.fn.domManip
 $.fn.domManip = function() {
 
   var callback = arguments[3];
-  arguments[3] = function(elem) {
-    callback.apply(this, [elem]);
-    if (elem.nodeType != 3) $.ensure.applyActions(elem);
-  };
+
+  // don't do anything special if we're moving an element that already exists
+  if (!(arguments[0].length && arguments[0][0].jquery)) {
+    arguments[3] = function(elem) {
+      callback.apply(this, [elem]);
+      if (elem.nodeType != 3) $.ensure.applyActions(elem);
+    };
+  }
 
   // Call the original method
   var r = domManip.apply(this, arguments);
