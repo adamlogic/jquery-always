@@ -4,6 +4,12 @@ h2. What is it?
 
 A jQuery plugin to ensure that a specified jquery method/behavior gets applied to DOM elements that are dynamically added after the initial page load.
 
+h2. Methods
+
+h3. ensure(method, [args])
+
+Applies the method (such as 'click', 'css', or any other jQuery method) immediately and whenever new content is added dynamically.  Any number of additional arguments can be supplied and will be passed along to the method.
+
 h2. How do I use it?
 
 start with:
@@ -17,3 +23,7 @@ ensure it (replaces previous line):
 add some content:
 
 <code>$('body').append('<a href="#" class="do_something">click me</a>');</code>
+
+h2. Isn't this the same as "livequery?":http://brandonaaron.net/docs/livequery/
+
+It's very similar, and I certainly got a lot of inspiration from livequery.  My goal with jquery-ensure is to meet the same need as livequery with a more simplified API.
