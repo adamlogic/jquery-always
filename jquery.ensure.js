@@ -1,67 +1,67 @@
 (function($) {
 
 $.fn.ensure = function(fn) {
-  var args = $.makeArray(arguments), selector = this.selector, prevObject = this.prevObject;
+  var args = $.makeArray(arguments), 
+      selector = this.selector,
+      context = (this.prevObject && this.prevObject.parents().length) ? this.prevObject : $('body');
   args.shift();
 
-  var id = $.ensure.actions.push({fn:fn, args:args, selector:selector, prevObject:prevObject}) - 1;
+  if (!this[fn]) throw('ensure only supports defined jquery methods - "' + fn + '" was attempted.');
+  if (selector.match(/\w /)) throw('ensure only supports simple selectors - "' + selector + '" was attempted.');
 
-  if (!this[fn]) throw(fn + ' has not been defined.');
-  return this[fn].apply(this, args);
-};
+  context.bind('ensure.run', function(e, elem) {
+    $.each(selector.split(','), function(i, selector) {
+      // find descendent elements
+      var elems = elem.find(selector);
 
-$.ensure = {
-  actions: [],
+      // include the element itself
+      if (elem.filter(selector).length) elems = elems.andSelf();
 
-  applyActions: function(elem) {
-    elem = $(elem);
-    $.each(this.actions, function(id, action) {
-      $.each(action.selector.split(','), function() {
-        var tokens = $.trim(this).split(' ');
-
-        // remove parent tokens from the selector
-        for (var i=0; elem.parents(tokens[i]).length && i < tokens.length; i++) {
-          tokens.shift();
-          i += 1;
-        }
-
-        // find contained elements that match the remaining selector
-        var selector = tokens.join(' '), elems = elem.find(selector);
-
-        // include the element itself
-        if (elem.filter(selector).length) elems = elems.andSelf();
-
-        // apply the action to all matched elements
-        elems.each(function() {
-          $(this)[action.fn].apply($(this), action.args);
-        });
+      // apply the action to all matched elements
+      elems.each(function() {
+        $(this)[fn].apply($(this), args);
       });
     });
-  }
+  });
+
+  return this[fn].apply(this, args);
 };
 
 // Wrap the jQuery domManip method to apply all ensured actions
 var domManip = $.fn.domManip
 $.fn.domManip = function() {
 
-  var callback = arguments[3];
+  var callback = arguments[3], self = this;
 
-  // don't do anything special if we're moving an element that already exists
-  if (!(arguments[0].length && arguments[0][0].jquery)) {
-    arguments[3] = function(elem) {
-      callback.apply(this, [elem]);
-      if (elem.nodeType != 3) $.ensure.applyActions(elem);
-    };
-  }
+  arguments[3] = function(elem) {
+    var alreadyOnPage = elem.parentNode && elem.parentNode.parentNode;
+
+    callback.apply(this, [elem]);
+
+    if (elem.nodeType != 3 && !alreadyOnPage) {
+      // parents() will be unnecessary if/when jquery supports custom event bubbling
+      self.parents().andSelf().trigger('ensure.run', [$(elem)]);
+    }
+  };
 
   // Call the original method
-  var r = domManip.apply(this, arguments);
-  
-  // Return the original methods result
+  return domManip.apply(this, arguments);
+};
+
+// Wrap the jQuery find method to expose the most recent selector used
+// (find is called inside $(selector))
+var find = $.fn.find;
+$.fn.find = function(selector) {
+  // Call the original find and save the result
+  var r = find.apply(this, arguments);
+       
+  r.selector = selector;
+
   return r;
 };
 
 // Wrap the jQuery init method to expose the selector
+// (necessary because find is not called for $(#id))
 var init = $.prototype.init;
 $.prototype.init = function(selector, context) {
 	// Call the original init and save the result

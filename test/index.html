@@ -15,35 +15,62 @@
 
 <script language="javascript" type="text/javascript">
 
+// --- SETUP ---
+
 $(function() {
-  $('#container1 span').ensure('addClass', 'ensured');
   $('#container1').ensure('addClass', 'ensured');
+  $('#container1').find('span').ensure('addClass', 'ensured');
+  $('p').ensure('addClass', 'ensured');
+  $('a.multi, p.multi').ensure('addClass', 'multi_success');
 });
 
-module("When ensuring an action");
+// --- TESTS ---
 
-test("it should apply the action to any matching elements on the page", function() {
-  ok($('#container1').hasClass('ensured'), 'action was applied');
+test("ensure should apply the action to any matching elements on the page", function() {
+  ok($('#container1').hasClass('ensured'), 'action was not applied');
 });
 
-module("When adding an element to the page");
+test("an element should receive the ensured action if it matches the selector", function() {
+  $('#container1').append('<p id="match">test</p>');
+  ok($('#match').hasClass('ensured'), 'action was not applied');
+});
 
-test("it should receive the ensured action if it matches the selector", function() {
-  $('#container1').append('<span id="test1">test</span>');
-  ok($('#test1').hasClass('ensured'), 'action was applied');
-})
+test("ensure should respect the context from which it was called", function() {
+  $('#container1').append('<span id="context">test</span>');
+  ok($('#context').hasClass('ensured'), 'action was not applied');
+});
 
-test("it should not receive the ensured action if it does not match the selector", function() {
-  $('#container2').append('<span id="test2">test</span>');
-  ok(!$('#test2').hasClass('ensured'), 'action was not applied');
-})
-
-module("When adding an element with children to the page");
+test("an element should not receive the ensured action if it is not within the context", function() {
+  $('#container2').append('<span id="no_context">test</span>');
+  ok(!$('#no_context').hasClass('ensured'), 'action was applied');
+});
 
 test("child elements should receive the ensured action if they match the selector", function() {
   $('#container1').append('<div><span id="nested">test</span></div>');
-  ok($('#nested').hasClass('ensured'), 'action was applied');
-})
+  ok($('#nested').hasClass('ensured'), 'action was not applied');
+});
+
+test("ensure should support multiple selectors", function() {
+  $('body').append('<p id="multi" class="multi">test</p>');
+  ok($('#multi').hasClass('multi_success'), 'action was not applied');
+});
+
+test("elements already on the page should not be ensured when moving to a new location", function() {
+  $('#container1').append($('#move_me'));
+  ok(!$('#move_me').hasClass('ensured'), 'action was applied');
+});
+
+test("ensure should support adding cloned elements", function() {
+  $('#container1').append($('#move_me').clone().attr('id', 'clone'));
+  ok($('#clone').hasClass('ensured'), 'action was not applied');
+});
+
+test("ensure should support custom jquery methods", function() {
+  $.fn.customFn = function() { this.addClass('customized') };
+  $('#container1').ensure('customFn');
+  ok($('#container1').hasClass('customized'), 'action was not applied');
+});
+
 
 </script>
 
@@ -58,6 +85,7 @@ test("child elements should receive the ensured action if they match the selecto
   <!-- HTML used by tests -->
   <div id="container1" class="hidden"></div>
   <div id="container2" class="hidden"></div>
+  <span id="move_me"></span>
         
 </body>
 </html>
