@@ -12,18 +12,22 @@ Applies the method (such as 'click', 'css', or any other jQuery method) immediat
 
 h2. How do I use it?
 
-start with:
+Let's say you have a click handler defined like this:
 
 <code>$('.do_something').click(function() { alert('something') });</code>
 
-ensure it (replaces previous line):
+Ensure it like this:
 
 <code>$('.do_something').ensure('click', function() { alert('something') });</code>
 
-add some content:
+Any content added to the page will handled automatically:
 
 <code>$('body').append('<a href="#" class="do_something">click me</a>');</code>
 
+Note that ensure only supports "simple" selectors that are supported by jquery's <code>filter</code> method.  In particular, this means you cannot use hierarchical selectors.  Instead, use a context refine your scope:
+
+<code>$('#some_div').find('.awesomeness').ensure(doStuff);<code>
+
 h2. Isn't this the same as "livequery?":http://brandonaaron.net/docs/livequery/
 
-It's very similar, and I certainly got a lot of inspiration from livequery.  My goal with jquery-ensure is to meet the same need as livequery with a more simplified API.
+It's very similar but with fewer features.  I certainly got a lot of inspiration from livequery.  My goal with jquery-ensure is to meet the same need that livequery met for me with a more simplified API and without the features I didn't need.
