@@ -26,7 +26,7 @@ Any content added to the page will handled automatically:
 
 Note that ensure only supports "simple" selectors that are supported by jquery's <code>filter</code> method.  In particular, this means you cannot use hierarchical selectors.  Instead, use a context refine your scope:
 
-<code>$('#some_div').find('.awesomeness').ensure(doStuff);</code>
+<code>$('#some_div').find('.awesomeness').ensure('doStuff');</code>
 
 h2. Isn't this the same as "livequery?":http://brandonaaron.net/docs/livequery/
 
