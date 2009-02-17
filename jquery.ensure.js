@@ -1,26 +1,21 @@
 (function($) {
 
 $.fn.ensure = function(fn) {
-  var args = $.makeArray(arguments), 
+  var args = $.makeArray(arguments),
       selector = this.selector,
-      context = (this.prevObject && this.prevObject.parents().length) ? this.prevObject : $('body');
+      context = this.context ? $(this.context) : $('body');
+
   args.shift();
 
-  if (!this[fn]) throw('ensure only supports defined jquery methods - "' + fn + '" was attempted.');
-  if (selector.match(/\w /)) throw('ensure only supports simple selectors - "' + selector + '" was attempted.');
+  if (!this[fn]) throw(fn + ' has not been defined.');
 
-  context.bind('ensure.run', function(e, elem) {
-    $.each(selector.split(','), function(i, selector) {
-      // find descendent elements
-      var elems = elem.find(selector);
+  context.bind('ensure.inserted', function(e) {
+    // find matching descendent elements, including the element itself
+    var elems = $(e.target).find('*').andSelf().filter(selector);
 
-      // include the element itself
-      if (elem.filter(selector).length) elems = elems.andSelf();
-
-      // apply the action to all matched elements
-      elems.each(function() {
-        $(this)[fn].apply($(this), args);
-      });
+    // apply the action to all matched elements
+    elems.each(function() {
+      $(this)[fn].apply($(this), args);
     });
   });
 
@@ -31,48 +26,27 @@ $.fn.ensure = function(fn) {
 var domManip = $.fn.domManip
 $.fn.domManip = function() {
 
-  var callback = arguments[3], self = this;
+  var callback = arguments[2],
+      elems = arguments[0],
+      alreadyOnPage = false;
 
-  arguments[3] = function(elem) {
-    var alreadyOnPage = elem.parentNode && elem.parentNode.parentNode;
+  $.each(elems, function(i, elem) {
+    if (elem.length) elem = elem[0];
+    if (elem.parentNode) alreadyOnPage = true;
+  });
 
-    callback.apply(this, [elem]);
+  arguments[2] = function(elem) {
+    var first = elem.firstChild; // don't want the document-fragment
+
+    callback.call(this, elem);
 
     if (elem.nodeType != 3 && !alreadyOnPage) {
-      // parents() will be unnecessary if/when jquery supports custom event bubbling
-      self.parents().andSelf().trigger('ensure.run', [$(elem)]);
+      $(first).trigger('ensure.inserted');
     }
   };
 
   // Call the original method
   return domManip.apply(this, arguments);
 };
-
-// Wrap the jQuery find method to expose the most recent selector used
-// (find is called inside $(selector))
-var find = $.fn.find;
-$.fn.find = function(selector) {
-  // Call the original find and save the result
-  var r = find.apply(this, arguments);
-       
-  r.selector = selector;
-
-  return r;
-};
-
-// Wrap the jQuery init method to expose the selector
-// (necessary because find is not called for $(#id))
-var init = $.prototype.init;
-$.prototype.init = function(selector, context) {
-	// Call the original init and save the result
-	var r = init.apply(this, arguments);
-	
-  r.selector = selector
-
-	return r;
-};
-
-// Give the init function the jQuery prototype for later instantiation (needed after Rev 4091)
-$.prototype.init.prototype = $.prototype;
 
 })(jQuery);
