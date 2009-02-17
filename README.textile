@@ -24,6 +24,8 @@ Any content added to the page will handled automatically:
 
 <code>$('body').append('<a href="#" class="do_something">click me</a>');</code>
 
+*requires jQuery 1.3*
+
 h2. Isn't this the same as "livequery?":http://brandonaaron.net/docs/livequery/
 
 It's very similar but with fewer features and a modified API.  I certainly got a lot of inspiration from livequery.  My goal with this is to meet the same need that livequery met for me with a more simplified API and without the features I didn't need.
