@@ -1,4 +1,4 @@
-h1. jquery-ensure
+h1. jquery-always
 
 h2. What is it?
 
@@ -6,9 +6,9 @@ A jQuery plugin to ensure that a specified jquery method/behavior gets applied t
 
 h2. Methods
 
-h3. ensure(method, [args])
+h3. always()
 
-Applies the method (such as 'click', 'css', or any other jQuery method) immediately and whenever new content is added dynamically.  Any number of additional arguments can be supplied and will be passed along to the method.
+Ensures that all subsequent method calls in the chain (such as 'click', 'addClass', or any other jQuery method, built-in or custom) get applied both immediately and whenever new content is added dynamically.  
 
 h2. How do I use it?
 
@@ -16,18 +16,14 @@ Let's say you have a click handler defined like this:
 
 <code>$('.do_something').click(function() { alert('something') });</code>
 
-Ensure it like this:
+If you want to make sure that elements added dynamically also receive the 'click' method, use always():
 
-<code>$('.do_something').ensure('click', function() { alert('something') });</code>
+<code>$('.do_something').always().click(function() { alert('something') });</code>
 
 Any content added to the page will handled automatically:
 
 <code>$('body').append('<a href="#" class="do_something">click me</a>');</code>
 
-Note that ensure only supports "simple" selectors that are supported by jquery's <code>filter</code> method.  In particular, this means you cannot use hierarchical selectors.  Instead, use a context refine your scope:
-
-<code>$('#some_div').find('.awesomeness').ensure('doStuff');</code>
-
 h2. Isn't this the same as "livequery?":http://brandonaaron.net/docs/livequery/
 
-It's very similar but with fewer features.  I certainly got a lot of inspiration from livequery.  My goal with jquery-ensure is to meet the same need that livequery met for me with a more simplified API and without the features I didn't need.
+It's very similar but with fewer features and a modified API.  I certainly got a lot of inspiration from livequery.  My goal with this is to meet the same need that livequery met for me with a more simplified API and without the features I didn't need.
