@@ -2,13 +2,13 @@ h1. jquery-always
 
 h2. What is it?
 
-A jQuery plugin to ensure that a specified jquery method/behavior gets applied to DOM elements that are dynamically added after the initial page load.
+A jQuery plugin that automatically applies jQuery methods to elements that are dynamically added to the page.
 
 h2. Methods
 
 h3. always()
 
-Ensures that all subsequent method calls in the chain (such as 'click', 'addClass', or any other jQuery method, built-in or custom) get applied both immediately and whenever new content is added dynamically.  
+All subsequent method calls in the chain (such as 'click', 'addClass', or any other jQuery method, built-in or custom) get applied both immediately and whenever new content is added dynamically.  
 
 h2. How do I use it?
 
@@ -27,3 +27,4 @@ Any content added to the page will handled automatically:
 h2. Isn't this the same as "livequery?":http://brandonaaron.net/docs/livequery/
 
 It's very similar but with fewer features and a modified API.  I certainly got a lot of inspiration from livequery.  My goal with this is to meet the same need that livequery met for me with a more simplified API and without the features I didn't need.
+
