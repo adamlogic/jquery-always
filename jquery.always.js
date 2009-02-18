@@ -1,3 +1,15 @@
+/*
+ * jQuery Always 
+ * version: 0.1
+ * @requires jQuery v1.3 or later
+ *
+ * Examples and documentation at: http://github.com/adamlogic/jquery-always
+ *
+ * Copyright 2009 Adam McCrea (adam@adamlogic.com)
+ * Dual licensed under the MIT and GPL licenses:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ */
 (function($) {
 
 $.fn.always = function() {
