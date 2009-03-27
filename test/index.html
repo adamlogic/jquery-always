@@ -37,6 +37,11 @@ test("an element should receive the method if it matches the selector", function
   ok($('#match').hasClass('applied'), 'method was not applied');
 });
 
+test("content can be added to the DOM with out a single parent node (multiple top-level elements)", function() {
+  $('#container1').append('<p id="first">test</p><p id="second">test</p>');
+  ok($('#second').hasClass('applied'), 'method was not applied to second element');
+});
+
 test("always should respect the context from which it was called", function() {
   $('#container1').append('<span id="context">test</span>');
   ok($('#context').hasClass('applied'), 'method was not applied');

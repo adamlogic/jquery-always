@@ -64,12 +64,12 @@ $.fn.domManip = function() {
   });
 
   arguments[2] = function(elem) {
-    var first = elem.firstChild; // don't want the document-fragment
+    var insertedElements = $(elem.childNodes); // elem is a document-fragment
 
     callback.call(this, elem);
 
     if (elem.nodeType != 3 && !alreadyOnPage) {
-      $(first).trigger('always.inserted');
+      insertedElements.trigger('always.inserted');
     }
   };
 
