@@ -59,6 +59,7 @@ $.fn.domManip = function() {
       alreadyOnPage = false;
 
   $.each(elems, function(i, elem) {
+    if (typeof elem == 'string') return;
     if (elem.length) elem = elem[0];
     if (elem.parentNode) alreadyOnPage = true;
   });
