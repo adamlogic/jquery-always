@@ -12,20 +12,22 @@
  */
 (function($) {
 
-$.fn.always = function() {
-  return new $.always.init(this);
+$.fn.always = function(debug) {
+  return new $.always.init(this, debug);
 };
 
 $.always = {};
-$.always.init = function(original) {
+$.always.init = function(original, debug) {
   this.selector = original.selector,
   this.context = original.context ? $(original.context) : $('body');
   this.original = original;
+  this.debug = debug;
 };
 
 $.always.registerFunction = function(functionName) {
   $.always.init.prototype[functionName] = function() {
     var selector = this.selector,
+        debug = this.debug,
         args = arguments;
 
     this.context.bind('always.inserted', function(e) {
@@ -34,10 +36,12 @@ $.always.registerFunction = function(functionName) {
 
       // apply the action to all matched elements
       elems.each(function(i, elem) {
+        if (debug) console.log('reapplying %s to %o', functionName, elem);
         $.fn[functionName].apply($(elem), args);
       });
     });
 
+    if (debug) console.log('applying %s for the first time', functionName);
     $.fn[functionName].apply(this.original, args);
 
     return this;
