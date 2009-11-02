@@ -60,7 +60,7 @@ $.fn.domManip = function() {
 
   $.each(elems, function(i, elem) {
     if (typeof elem == 'string') return;
-    if (elem.length) elem = elem[0];
+    if (elem.jquery) elem = elem[0];
     if (elem.parentNode) alreadyOnPage = true;
   });
 
