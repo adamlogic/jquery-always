@@ -1,7 +1,7 @@
 /*
  * jQuery Always 
- * version: 0.1
- * @requires jQuery v1.3 or later
+ * version: 0.9
+ * @requires jQuery v1.4 or later
  *
  * Examples and documentation at: http://github.com/adamlogic/jquery-always
  *
@@ -12,45 +12,18 @@
  */
 (function($) {
 
-$.fn.always = function() {
-  return new $.always.init(this);
+$.fn.always = function(fn) {
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  this.live('DOMInsert', function() {
+    $.fn[fn].apply($(this), args);
+  })
+  
+  return this.trigger('DOMInsert');
 };
 
-$.always = {};
-$.always.init = function(original) {
-  this.selector = original.selector,
-  this.context = original.context ? $(original.context) : $('body');
-  this.original = original;
-};
 
-$.always.registerFunction = function(functionName) {
-  $.always.init.prototype[functionName] = function() {
-    var selector = this.selector,
-        args = arguments;
-
-    this.context.bind('always.inserted', function(e) {
-      // find matching descendent elements, including the element itself
-      var elems = $(e.target).find('*').andSelf().filter(selector);
-
-      // apply the action to all matched elements
-      elems.each(function(i, elem) {
-        $.fn[functionName].apply($(elem), args);
-      });
-    });
-
-    $.fn[functionName].apply(this.original, args);
-
-    return this;
-  }
-};
-
-$(function() {
-  for (var functionName in $.fn) {
-    $.always.registerFunction(functionName);
-  }
-});
-
-// Wrap the jQuery domManip method to trigger the always.inserted event
+// Wrap the jQuery domManip method to trigger the DOMInsert event
 var domManip = $.fn.domManip
 $.fn.domManip = function() {
 
@@ -65,17 +38,25 @@ $.fn.domManip = function() {
   });
 
   arguments[2] = function(elem) {
-    var insertedElements = $(elem.childNodes); // elem is a document-fragment
+    var insertedElements = selfAndAllDescendants(elem);
 
     callback.call(this, elem);
 
     if (elem.nodeType != 3 && !alreadyOnPage) {
-      insertedElements.trigger('always.inserted');
+      $(insertedElements).trigger('DOMInsert');
     }
   };
 
   // Call the original method
   return domManip.apply(this, arguments);
 };
+
+function selfAndAllDescendants(node) {
+  nodes = [node];
+  $.each(node.childNodes, function(i, child) {
+    nodes = nodes.concat(selfAndAllDescendants(child));
+  });
+  return nodes;
+}
 
 })(jQuery);

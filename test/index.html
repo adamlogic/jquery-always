@@ -18,10 +18,10 @@
 // --- SETUP ---
 
 $(function() {
-  $('#container1').always().addClass('applied');
-  $('#container1').find('span').always().addClass('applied');
-  $('p').always().addClass('applied');
-  $('a.multi, p.multi').always().addClass('multi_success');
+  $('#container1').always('addClass', 'applied');
+  $('#container1 span').always('addClass', 'applied');
+  $('p').always('addClass', 'applied');
+  $('a.multi, p.multi').always('addClass', 'multi_success');
 });
 
 $.fn.customFn = function() { this.addClass('customized') };
@@ -73,7 +73,7 @@ test("always should support adding cloned elements", function() {
 });
 
 test("always should support custom jquery methods", function() {
-  $('#container1').always().customFn();
+  $('#container1').always('customFn');
   ok($('#container1').hasClass('customized'), 'method was not applied');
 });
 
